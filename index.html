@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReWear - Socratic Eco Fashion</title>
+    
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+
+    <style>
+        :root {
+            --primary-green: #2d5a27;
+            --secondary-green: #4caf50;
+            --socrates-gold: #d4af37;
+            --text-dark: #333;
+            --light-bg: #fdfdfd;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Garamond', 'Georgia', serif;
+            margin: 0; padding: 0;
+            color: var(--text-dark);
+            background-color: var(--light-bg);
+        }
+
+        header {
+            background: var(--white);
+            padding: 10px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .logo-img { height: 60px; }
+
+        .search-container {
+            flex-grow: 1; max-width: 300px; margin: 0 20px;
+        }
+        .search-container input {
+            width: 100%; padding: 8px; border-radius: 20px; border: 1px solid #ddd;
+        }
+
+        nav ul { list-style: none; display: flex; gap: 20px; margin: 0; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: bold; transition: 0.3s; }
+        nav a:hover { color: var(--secondary-green); }
+
+        .cart-status {
+            background: var(--primary-green); color: white;
+            padding: 10px 18px; border-radius: 25px; font-weight: bold;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/hero-bg.jpg');
+            background-size: cover; background-position: center;
+            height: 400px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; color: white; text-align: center;
+        }
+
+        .socrates-quote {
+            background: #f9f4e8;
+            padding: 50px 10%; text-align: center;
+            border-bottom: 3px solid var(--socrates-gold);
+            font-style: italic;
+        }
+        .socrates-quote h2 { color: var(--primary-green); font-family: 'Times New Roman', serif; }
+
+        .shop-section { padding: 50px 5%; }
+        .product-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px;
+        }
+
+        .product-card {
+            background: white; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;
+            transition: 0.3s; border: 1px solid #eee; padding-bottom: 20px;
+        }
+        .product-card:hover { transform: translateY(-5px); }
+
+        .product-img { width: 100%; height: 280px; object-fit: cover; }
+
+        .qty-input {
+            width: 60px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;
+            margin: 10px 0; text-align: center;
+        }
+
+        .btn-add {
+            background: var(--secondary-green); color: white;
+            border: none; padding: 10px 20px; border-radius: 20px;
+            cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .btn-add:hover { background: var(--primary-green); }
+
+        #toast {
+            visibility: hidden; min-width: 280px; background-color: #333;
+            color: #fff; text-align: center; border-radius: 8px;
+            padding: 16px; position: fixed; z-index: 1; left: 50%;
+            bottom: 30px; transform: translateX(-50%);
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 3s; }
+
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        footer { background: #1a1a1a; color: #aaa; padding: 40px 5%; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
+        .footer-logo h2 { color: white; margin: 0; }
+        .contact-info b { color: var(--secondary-green); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo-box">
+            <img src="images/logo.png" alt="ReWear Logo" class="logo-img">
+            <div>
+                <h1 style="margin:0; font-size: 22px; color: var(--primary-green);">ReWear</h1>
+                <p style="margin:0; font-size: 10px; text-transform: uppercase;">The Socratic Way of Style</p>
+            </div>
+        </a>
+
+        <div class="search-container">
+            <input type="text" placeholder="Αναζήτηση προϊόντων...">
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="#shop">Shop</a></li>
+                <li><a href="#philosophy">Φιλοσοφία</a></li>
+            </ul>
+        </nav>
+
+        <div class="cart-status">
+            🛒 <span id="cart-items">0</span> Τεμ. | <span id="cart-total">0</span>€
+        </div>
+    </header>
+
+    <section class="hero">
+        <h2 style="font-size: 40px;">ΦΟΡΕΣΕ ΤΟ ΜΕΛΛΟΝ, ΦΥΣΙΚΑ!</h2>
+        <p>Βιώσιμη Μόδα - Ενεργειακή Αυτονομία - Ηθική Παραγωγή</p>
+    </section>
+
+    <section id="philosophy" class="socrates-quote">
+        <h2>"Οὐκ ἀπὸ χρημάτων ἀρετὴ γίγνεται, ἀλλ' ἐξ ἀρετῆς χρήματα..."</h2>
+        <p><i>- Σωκράτης</i></p>
+        <div style="max-width: 800px; margin: 20px auto; font-style: normal; color: #555; line-height: 1.8;">
+            <p>Όπως ο Σωκράτης δίδασκε ότι η <b>Αρετή είναι Γνώση</b>, έτσι και στη ReWear πιστεύουμε ότι η γνώση της προέλευσης των ρούχων μας είναι το πρώτο βήμα για μια ηθική ζωή...</p>
+        </div>
+    </section>
+
+    <section id="shop" class="shop-section">
+        <h2 style="text-align:center; color: var(--primary-green); margin-bottom: 40px;">Επιλέξτε με Σοφία 🏛️</h2>
+        <div class="product-grid">
+            
+            <!-- Κανονικά προϊόντα -->
+            <div class="product-card">
+                <img src="images/jacket.jpg" alt="Μπουφάν" class="product-img">
+                <h3>Μπουφάν Re-Tech</h3>
+                <p class="price">100€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-jacket">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-jacket', 100, 'Μπουφάν Re-Tech')">Προσθήκη</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/dress.jpg" alt="Φόρεμα" class="product-img">
+                <h3>Φόρεμα Gaia</h3>
+                <p class="price">65€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-dress">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-dress', 65, 'Φόρεμα Gaia')">Προσθήκη</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/shirt.jpg" alt="Πουκάμισο" class="product-img">
+                <h3>Πουκάμισο Λινό</h3>
+                <p class="price">50€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-shirt">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-shirt', 50, 'Πουκάμισο Λινό')">Προσθήκη</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/pants.jpg" alt="Παντελόνι" class="product-img">
+                <h3>Eco-Denim Παντελόνι</h3>
+                <p class="price">45€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-pants">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-pants', 45, 'Eco-Denim Παντελόνι')">Προσθήκη</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/tshirt.jpg" alt="Μπλούζα" class="product-img">
+                <h3>Μπλούζα Μακό</h3>
+                <p class="price">40€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-tshirt">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-tshirt', 40, 'Μπλούζα Μακό')">Προσθήκη</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/scarf.jpg" alt="Κασκόλ" class="product-img">
+                <h3>Κασκόλ Silk-Mix</h3>
+                <p class="price">20€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-scarf">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-scarf', 20, 'Κασκόλ Silk-Mix')">Προσθήκη</button>
+            </div>
+
+            <!-- 🔥 ΣΩΚΡΑΤΙΚΑ MEMES 🔥 -->
+            <div class="product-card">
+                <img src="images/socrates-toga.jpg" alt="Σωκράτης Toga" class="product-img" style="object-fit: contain; background: #f9f4e8;">
+                <h3>Σωκράτης - Toga Edition</h3>
+                <p class="price">0€ <small style="color:#d4af37;">(ΔΩΡΕΑΝ με Αρετή)</small></p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-socrates">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-socrates', 0, 'Σωκράτης Toga')">Προσθήκη στη Σοφία</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/socrates-ragebait.jpg" alt="Σωκράτης Ragebait" class="product-img" style="object-fit: contain; background: #f9f4e8;">
+                <h3>Σωκράτης Ragebait T-Shirt</h3>
+                <p class="price">35€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-ragebait">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-ragebait', 35, 'Σωκράτης Ragebait')">Προσθήκη (stop ragebaiting me!)</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/socrates-drank.jpg" alt="I Drank What" class="product-img" style="object-fit: contain; background: #f9f4e8;">
+                <h3>Σωκράτης - I Drank What?</h3>
+                <p class="price">28€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-drank">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-drank', 28, 'I Drank What T-shirt')">Προσθήκη</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/socrates-kalathi.jpg" alt="Σωκράτης στο Καλάθι" class="product-img" style="object-fit: contain; background: #f9f4e8;">
+                <h3>Σωκράτης στο Καλάθι</h3>
+                <p class="price">0€ <small style="color:#d4af37;">(ΔΩΡΕΑΝ αν ξέρεις τι είναι αρετή)</small></p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-kalathi">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-kalathi', 0, 'Σωκράτης & Καλάθι')">Προσθήκη στη Σοφία σου</button>
+            </div>
+
+            <div class="product-card">
+                <img src="images/socrates-twerk.jpg" alt="Σωκράτης Twerking" class="product-img" style="object-fit: contain; background: #f9f4e8;">
+                <h3>Σωκράτης Throwing Yams</h3>
+                <p class="price">42€</p>
+                <label>Τεμάχια:</label>
+                <input type="number" value="1" min="1" class="qty-input" id="qty-yams">
+                <br>
+                <button class="btn-add" onclick="updateCart('qty-yams', 42, 'Σωκράτης Twerk')">Προσθήκη (What is your power?)</button>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="toast">Προστέθηκε στο καλάθι!</div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>ReWear</h2>
+                <p>Sustainable Youth Fashion</p>
+            </div>
+            <div class="contact-info">
+                <h4>Επικοινωνία</h4>
+                <p>📞 Τηλ: <b>69738812116</b></p>
+                <p>📍 Κέντρο Πόλης | Εργοστάσιο: Βιομηχανική Ζώνη</p>
+                <p>☀️ 100% Ενεργειακή Αυτονομία (Solar Powered)</p>
+            </div>
+            <div>
+                <h4>Newsletter</h4>
+                <input type="email" placeholder="Το email σας" style="padding: 5px; border-radius: 5px; border:none;">
+                <button style="padding: 5px 10px; background: var(--secondary-green); color:white; border:none; cursor:pointer;">OK</button>
+            </div>
+        </div>
+        <hr style="border: 0.5px solid #333; margin: 20px 0;">
+        <p style="text-align:center; font-size: 12px;">© 2026 ReWear - www.rewear.gr | Σωκρατική Προσέγγιση στη Μόδα</p>
+    </footer>
+
+    <script>
+        let totalItems = 0;
+        let totalPrice = 0;
+
+        function updateCart(id, price, name) {
+            const qty = parseInt(document.getElementById(id).value) || 1;
+            if(qty > 0) {
+                totalItems += qty;
+                totalPrice += (price * qty);
+                
+                document.getElementById('cart-items').innerText = totalItems;
+                document.getElementById('cart-total').innerText = totalPrice;
+                
+                let msg = qty + " × " + name + " προστέθηκαν.";
+                if (price === 0) msg = qty + " × " + name + " προστέθηκαν στη Σοφία σου!";
+                if (name.includes("Ragebait")) msg = "Stop ragebaiting me bro!";
+                if (name.includes("Twerk")) msg = "What is your power? Προστέθηκε!";
+                
+                showToast(msg);
+            }
+        }
+
+        function showToast(msg) {
+            const x = document.getElementById("toast");
+            x.innerText = msg;
+            x.className = "show";
+            setTimeout(() => { x.className = ""; }, 3500);
+        }
+    </script>
+
+</body>
+</html>
